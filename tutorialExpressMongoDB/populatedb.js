@@ -15,6 +15,7 @@ var Book = require('./models/book')
 var Author = require('./models/author')
 var Genre = require('./models/genre')
 var BookInstance = require('./models/bookinstance')
+var Country = require('./models/country')
 
 
 var mongoose = require('mongoose');
@@ -28,14 +29,15 @@ var authors = []
 var genres = []
 var books = []
 var bookinstances = []
+var countries = []
 
-function authorCreate(first_name, family_name, d_birth, d_death, cb) {
-  authordetail = {first_name:first_name , family_name: family_name }
+function authorCreate(first_name, family_name, d_birth, d_death,country , cb) {
+  authordetail = {first_name:first_name , family_name: family_name , country: country}
   if (d_birth != false) authordetail.date_of_birth = d_birth
   if (d_death != false) authordetail.date_of_death = d_death
-  
+
   var author = new Author(authordetail);
-       
+
   author.save(function (err) {
     if (err) {
       cb(err, null)
@@ -47,9 +49,23 @@ function authorCreate(first_name, family_name, d_birth, d_death, cb) {
   }  );
 }
 
+function countryCreate(name, continent, cb) {
+  var country = new Country({name: name, continent: continent});
+
+  country.save(function (err) {
+    if (err) {
+      cb(err, null)
+      return
+    }
+    console.log('New Country: ' + country);
+    countries.push(country)
+    cb(null, country)
+  }  );
+}
+
 function genreCreate(name, cb) {
   var genre = new Genre({ name: name });
-       
+
   genre.save(function (err) {
     if (err) {
       cb(err, null);
@@ -62,15 +78,15 @@ function genreCreate(name, cb) {
 }
 
 function bookCreate(title, summary, isbn, author, genre, cb) {
-  bookdetail = { 
+  bookdetail = {
     title: title,
     summary: summary,
     author: author,
     isbn: isbn
   }
   if (genre != false) bookdetail.genre = genre
-    
-  var book = new Book(bookdetail);    
+
+  var book = new Book(bookdetail);
   book.save(function (err) {
     if (err) {
       cb(err, null)
@@ -84,14 +100,14 @@ function bookCreate(title, summary, isbn, author, genre, cb) {
 
 
 function bookInstanceCreate(book, imprint, due_back, status, cb) {
-  bookinstancedetail = { 
+  bookinstancedetail = {
     book: book,
     imprint: imprint
-  }    
+  }
   if (due_back != false) bookinstancedetail.due_back = due_back
   if (status != false) bookinstancedetail.status = status
-    
-  var bookinstance = new BookInstance(bookinstancedetail);    
+
+  var bookinstance = new BookInstance(bookinstancedetail);
   bookinstance.save(function (err) {
     if (err) {
       console.log('ERROR CREATING BookInstance: ' + bookinstance);
@@ -105,16 +121,22 @@ function bookInstanceCreate(book, imprint, due_back, status, cb) {
 }
 
 
-function createGenreAuthors(cb) {
+function createGenreAuthorsCountries(cb) {
     async.series([
         function(callback) {
-          authorCreate('Patrick', 'Rothfuss', '1973-06-06', false, callback);
+          countryCreate('España', '');
         },
         function(callback) {
-          authorCreate('Ben', 'Bova', '1932-11-8', false, callback);
+          countryCreate('Japón', 'Asia');
         },
         function(callback) {
-          authorCreate('Isaac', 'Asimov', '1920-01-02', '1992-04-06', callback);
+          authorCreate('Patrick', 'Rothfuss', '1973-06-06', countries[0],  false, callback);
+        },
+        function(callback) {
+          authorCreate('Ben', 'Bova', '1932-11-8', countries[1], false, callback);
+        },
+        function(callback) {
+          authorCreate('Isaac', 'Asimov', '1920-01-02', '1992-04-06', countries[1], false, callback);
         },
         function(callback) {
           authorCreate('Bob', 'Billings', false, false, callback);
@@ -135,7 +157,6 @@ function createGenreAuthors(cb) {
         // optional callback
         cb);
 }
-
 
 function createBooks(cb) {
     async.parallel([
@@ -209,7 +230,7 @@ function createBookInstances(cb) {
 
 
 async.series([
-    createGenreAuthors,
+    createGenreAuthorsCountries,
     createBooks,
     createBookInstances
 ],
@@ -220,12 +241,8 @@ function(err, results) {
     }
     else {
         console.log('BOOKInstances: '+bookinstances);
-        
+
     }
     // All done, disconnect from database
     mongoose.connection.close();
 });
-
-
-
-
