@@ -1,0 +1,13 @@
+extends layout
+
+block content
+  h1= title
+  
+  ul
+    each country in country_list
+      li 
+        a(href=country.url) #{country.name} 
+        |  (#{country.continent})
+
+    else
+      li There are no countries.

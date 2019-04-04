@@ -6,6 +6,7 @@ var book_controller = require('../controllers/bookController');
 var author_controller = require('../controllers/authorController');
 var genre_controller = require('../controllers/genreController');
 var book_instance_controller = require('../controllers/bookinstanceController');
+var country_controller = require('../controllers/countryController');
 
 /// BOOK ROUTES ///
 
@@ -93,7 +94,7 @@ router.get('/genres', genre_controller.genre_list);
 // GET request for creating a BookInstance. NOTE This must come before route that displays BookInstance (uses id).
 router.get('/bookinstance/create', book_instance_controller.bookinstance_create_get);
 
-// POST request for creating BookInstance. 
+// POST request for creating BookInstance.
 router.post('/bookinstance/create', book_instance_controller.bookinstance_create_post);
 
 // GET request to delete BookInstance.
@@ -113,5 +114,33 @@ router.get('/bookinstance/:id', book_instance_controller.bookinstance_detail);
 
 // GET request for list of all BookInstance.
 router.get('/bookinstances', book_instance_controller.bookinstance_list);
+
+
+
+/// COUNTRY ROUTES ///
+
+// GET request for creating Country. NOTE This must come before route for id (i.e. display country).
+router.get('/country/create', country_controller.country_create_get);
+
+// POST request for creating Country.
+router.post('/country/create', country_controller.country_create_post);
+
+// GET request to delete Country.
+router.get('/country/:id/delete', country_controller.country_delete_get);
+
+// POST request to delete Country.
+router.post('/country/:id/delete', country_controller.country_delete_post);
+
+// GET request to update Country.
+router.get('/country/:id/update', country_controller.country_update_get);
+
+// POST request to update Country.
+router.post('/country/:id/update', country_controller.country_update_post);
+
+// GET request for one Country.
+router.get('/country/:id', country_controller.country_detail);
+
+// GET request for list of all Country.
+router.get('/countries', country_controller.country_list);
 
 module.exports = router;

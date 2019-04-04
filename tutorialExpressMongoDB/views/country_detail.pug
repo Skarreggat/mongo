@@ -1,0 +1,20 @@
+extends layout
+
+block content
+
+  h1 Country: #{country.name}
+  div(style='margin-left:20px;margin-top:20px')
+
+    h4 Authors
+    
+    dl
+      each book in author_books
+        dt 
+          a(href=author.url) #{author.name}
+          dd #{author.lifespan}
+
+      else
+        p This country has no authors.
+  hr
+  p
+  a(href=country.url+'/delete') Delete country

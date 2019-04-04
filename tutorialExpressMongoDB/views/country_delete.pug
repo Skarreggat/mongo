@@ -1,0 +1,26 @@
+extends layout
+
+block content
+  h1 #{title}: #{country.name}
+  
+  if country_authors.length
+  
+    p #[strong Delete the following authors before attempting to delete this country.]
+  
+    div(style='margin-left:20px;margin-top:20px')
+
+      h4 Authors
+    
+      dl
+      each author in country_authors
+        dt 
+          a(href=author.url) #{author.name}
+
+  else
+    p Do you really want to delete this Country?
+    
+    form(method='POST' action='')
+      div.form-group
+        input#countryid.form-control(type='hidden',name='countryid', required='true', value=country._id )
+
+      button.btn.btn-primary(type='submit') Delete
