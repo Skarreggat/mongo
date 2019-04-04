@@ -5,14 +5,12 @@ block content
   h1 Country: #{country.name}
   div(style='margin-left:20px;margin-top:20px')
 
-    h4 Authors
+    h4 Countries
     
-    dl
-      each book in author_books
-        dt 
-          a(href=author.url) #{author.name}
-          dd #{author.lifespan}
-
+    ul
+      each author in country_authors
+        li
+          a(href=author.url) #{author.name} 
       else
         p This country has no authors.
   hr
