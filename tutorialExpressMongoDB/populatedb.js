@@ -15,7 +15,7 @@ var Book = require('./models/book')
 var Author = require('./models/author')
 var Genre = require('./models/genre')
 var BookInstance = require('./models/bookinstance')
-var Country = require('./models/country')
+var Country = require('./models/countries')
 
 
 var mongoose = require('mongoose');
@@ -124,25 +124,25 @@ function bookInstanceCreate(book, imprint, due_back, status, cb) {
 function createGenreAuthorsCountries(cb) {
     async.series([
         function(callback) {
-          countryCreate('España', '');
+          countryCreate('España', '', callback);
         },
         function(callback) {
-          countryCreate('Japón', 'Asia');
+          countryCreate('Japón', 'Asia', callback);
         },
         function(callback) {
-          authorCreate('Patrick', 'Rothfuss', '1973-06-06', countries[0],  false, callback);
+          authorCreate('Patrick', 'Rothfuss', '1973-06-06', false, countries[0], callback);
         },
         function(callback) {
-          authorCreate('Ben', 'Bova', '1932-11-8', countries[1], false, callback);
+          authorCreate('Ben', 'Bova', '1932-11-8', false, countries[1], callback);
         },
         function(callback) {
-          authorCreate('Isaac', 'Asimov', '1920-01-02', '1992-04-06', countries[1], false, callback);
+          authorCreate('Isaac', 'Asimov', '1920-01-02', '1992-04-06', countries[1], callback);
         },
         function(callback) {
-          authorCreate('Bob', 'Billings', false, false, callback);
+          authorCreate('Bob', 'Billings', false, false, null, callback);
         },
         function(callback) {
-          authorCreate('Jim', 'Jones', '1971-12-16', false, callback);
+          authorCreate('Jim', 'Jones', '1971-12-16', false, null, callback);
         },
         function(callback) {
           genreCreate("Fantasy", callback);
