@@ -20,7 +20,6 @@ exports.author_list = function (req, res, next) {
 
 // Display detail page for a specific Author.
 exports.author_detail = function (req, res, next) {
-
     async.parallel({
         author: function (callback) {
             Author.findById(req.params.id)
@@ -30,15 +29,22 @@ exports.author_detail = function (req, res, next) {
             Book.find({ 'author': req.params.id }, 'title summary')
                 .exec(callback)
         },
+        author_country: function (callback) {
+            Author.findById(req.params.id)
+            .populate('country')
+            .exec(callback)
+        }
     }, function (err, results) {
-        if (err) { return next(err); } // Error in API usage.
+        if (err) { console.log('Test 1');return next(err); } // Error in API usage.
         if (results.author == null) { // No results.
+          console.log('Test 2');
             var err = new Error('Author not found');
             err.status = 404;
             return next(err);
         }
         // Successful, so render.
-        res.render('author_detail', { title: 'Author Detail', author: results.author, author_books: results.authors_books });
+        console.log('Prueba');
+        res.render('author_detail', { title: 'Author Detail', author: results.author, author_books: results.authors_books, author_country: results.author_country});
     });
 
 };
@@ -70,7 +76,7 @@ exports.author_create_post = [
 
         // Extract the validation errors from a request.
         const errors = validationResult(req);
-        
+
         // Create Author object with escaped and trimmed data
         var author = new Author(
             {

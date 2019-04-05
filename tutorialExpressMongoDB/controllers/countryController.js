@@ -27,7 +27,7 @@ exports.country_detail = function (req, res, next) {
                 .exec(callback)
         },
         countries_authors: function (callback) {
-            Author.find({ 'name': req.params.id })//Aqui no estoy seguro **************************************
+            Author.find({ 'country': req.params.id })
                 .exec(callback)
         },
     }, function (err, results) {
