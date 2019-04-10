@@ -1,5 +1,5 @@
-var Author = require('../models/author')
 var async = require('async')
+var Author = require('../models/author')
 var Book = require('../models/book')
 var Country = require('../models/countries')
 
