@@ -1,6 +1,7 @@
 var Author = require('../models/author')
 var async = require('async')
 var Book = require('../models/book')
+var Country = require('../models/countries')
 
 const { body, validationResult } = require('express-validator/check');
 const { sanitizeBody } = require('express-validator/filter');
@@ -35,15 +36,13 @@ exports.author_detail = function (req, res, next) {
             .exec(callback)
         }
     }, function (err, results) {
-        if (err) { console.log('Test 1');return next(err); } // Error in API usage.
+        if (err) { return next(err); } // Error in API usage.
         if (results.author == null) { // No results.
-          console.log('Test 2');
             var err = new Error('Author not found');
             err.status = 404;
             return next(err);
         }
         // Successful, so render.
-        console.log('Prueba');
         res.render('author_detail', { title: 'Author Detail', author: results.author, author_books: results.authors_books, author_country: results.author_country});
     });
 
@@ -51,7 +50,21 @@ exports.author_detail = function (req, res, next) {
 
 // Display Author create form on GET.
 exports.author_create_get = function (req, res, next) {
-    res.render('author_form', { title: 'Create Author' });
+  async.parallel({
+      countries: function (callback) {
+          Country.find()
+              .exec(callback)
+      }
+  }, function (err, results) {
+      if (err) { return next(err); } // Error in API usage.
+      if (results.author == null) { // No results.
+          var err = new Error('Author not found');
+          err.status = 404;
+          return next(err);
+      }
+      // Successful, so render.
+      res.render('author_form', { title: 'Create Author' , countries: result.countries});
+  });
 };
 
 // Handle Author create on POST.

@@ -24,21 +24,18 @@ var db = mongoose.connection;
 db.on('error', console.error.bind(console, 'MongoDB connection error:'));
 
 //Eliminar colecciones antes del populate
+console.log('Iniciando eliminación de la base de datos....');
 db.collections['countries'].drop(function(err){
-  console.log('Se ha borrado la patata de datos....');
 });
 db.collections['authors'].drop(function(err){
-  console.log('Se ha borrado la patata de datos....');
 });
 db.collections['books'].drop(function(err){
-  console.log('Se ha borrado la patata de datos....');
 });
 db.collections['bookinstances'].drop(function(err){
-  console.log('Se ha borrado la patata de datos....');
 });
 db.collections['genres'].drop(function(err){
-  console.log('Se ha borrado la patata de datos....');
 });
+console.log('Se han eliminado todos los registros de la base de datos.');
 
 var authors = []
 var genres = []
@@ -135,26 +132,32 @@ function bookInstanceCreate(book, imprint, due_back, status, cb) {
   }  );
 }
 
-
+//Crear autores, sus países y géneros
 function createGenreAuthorsCountries(cb) {
     async.series([
         function(callback) {
-          countryCreate('España', '', callback);
+          countryCreate('United States', 'America', callback);
         },
         function(callback) {
-          countryCreate('Japón', 'Asia', callback);
+          countryCreate('Canada', 'America', callback);
+        },
+        function(callback) {
+          countryCreate('Japan', 'Asia', callback);
+        },
+        function(callback) {
+          countryCreate('Germany', 'Europe', callback);
         },
         function(callback) {
           authorCreate('Patrick', 'Rothfuss', '1973-06-06', false, countries[0], callback);
         },
         function(callback) {
-          authorCreate('Ben', 'Bova', '1932-11-8', false, countries[1], callback);
+          authorCreate('Ben', 'Bova', '1932-11-8', false, countries[0], callback);
         },
         function(callback) {
-          authorCreate('Isaac', 'Asimov', '1920-01-02', '1992-04-06', countries[1], callback);
+          authorCreate('Isaac', 'Asimov', '1920-01-02', '1992-04-06', countries[0], callback);
         },
         function(callback) {
-          authorCreate('Bob', 'Billings', false, false, null, callback);
+          authorCreate('Bob', 'Billings', false, false, countries[1], callback);
         },
         function(callback) {
           authorCreate('Jim', 'Jones', '1971-12-16', false, null, callback);
