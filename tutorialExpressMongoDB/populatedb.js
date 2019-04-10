@@ -39,6 +39,8 @@ db.collections['genres'].drop(function(err){
 });
 db.collections['formatos'].drop(function(err){//formatos o formato?
 });
+db.collections['prizes'].drop(function(err){
+});
 console.log('Se han eliminado todos los registros de la base de datos.');
 
 var authors = []
@@ -47,6 +49,7 @@ var books = []
 var bookinstances = []
 var countries = []
 var formatos = []
+var prizes = []
 
 function authorCreate(first_name, family_name, d_birth, d_death,country , cb) {
   authordetail = {first_name:first_name , family_name: family_name , country: country}
@@ -108,6 +111,22 @@ function formatoCreate(name, cb) {
   }   );
 }
 //////////////////////////////////////////////////////////////////////////////////////
+
+function prizeCreate(name, cb) {
+  var prize = new Prize({ name: name });
+
+  prize.save(function (err) {
+    if (err) {
+      cb(err, null);
+      return;
+    }
+    console.log('New Prize: ' + prize);
+    prizes.push(prize)
+    cb(null, prize);
+  }   );
+}
+
+
 function bookCreate(title, summary, isbn, author, genre, cb) {
   bookdetail = {
     title: title,
@@ -212,6 +231,18 @@ function createBooks(cb) {
       },
 
       //////////////////////////////////
+      function(callback) {
+        prizeCreate("Premio Nobel", callback);
+      },
+      function(callback) {
+        prizeCreate("Premio Cervantes", callback);
+      },
+      function(callback) {
+        prizeCreate("Premio Nadal", callback);
+      },
+      function(callback) {
+        prizeCreate("Premio Planeta", callback);
+      },
         function(callback) {
           bookCreate('The Name of the Wind (The Kingkiller Chronicle, #1)', 'I have stolen princesses back from sleeping barrow kings. I burned down the town of Trebon. I have spent the night with Felurian and left with both my sanity and my life. I was expelled from the University at a younger age than most people are allowed in. I tread paths by moonlight that others fear to speak of during day. I have talked to Gods, loved women, and written songs that make the minstrels weep.', '9781473211896', authors[0], [genres[0],],[formatos[0],formatos[1]], callback);
         },
