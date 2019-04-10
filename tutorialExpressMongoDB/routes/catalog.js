@@ -148,7 +148,7 @@ module.exports = router;
 
 /// PRIZE ROUTES ///
 
-// GET request for creating a Prize. NOTE This must come before route that displays Prize (uses id).
+// GET request for creating  a Prize. NOTE This must come before route that displays Prize (uses id).
 router.get('/prize/create', prize_controller.prize_create_get);
 
 //POST request for creating Prize.
