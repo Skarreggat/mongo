@@ -16,6 +16,7 @@ var Genre = require('./models/genre')
 var BookInstance = require('./models/bookinstance')
 var Country = require('./models/countries')
 var Formato = require('./models/formato')
+var Prize = require('./models/prize')
 
 var mongoose = require('mongoose');
 var mongoDB = userArgs[0];

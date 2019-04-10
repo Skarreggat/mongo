@@ -2,6 +2,7 @@ var Book = require('../models/book');
 var Author = require('../models/author');
 var Genre = require('../models/genre');
 var BookInstance = require('../models/bookinstance');
+var Prize = require('../models/prize')
 
 const { body,validationResult } = require('express-validator/check');
 const { sanitizeBody } = require('express-validator/filter');
@@ -110,13 +111,13 @@ exports.book_create_post = [
     body('author', 'Author must not be empty.').isLength({ min: 1 }).trim(),
     body('summary', 'Summary must not be empty.').isLength({ min: 1 }).trim(),
     body('isbn', 'ISBN must not be empty').isLength({ min: 1 }).trim(),
-  
+
     // Sanitize fields.
     sanitizeBody('*').escape(),
     sanitizeBody('genre.*').escape(),
     // Process request after validation and sanitization.
     (req, res, next) => {
-        
+
 
         // Extract the validation errors from a request.
         const errors = validationResult(req);
@@ -270,7 +271,7 @@ exports.book_update_post = [
         }
         next();
     },
-   
+
     // Validate fields.
     body('title', 'Title must not be empty.').isLength({ min: 1 }).trim(),
     body('author', 'Author must not be empty.').isLength({ min: 1 }).trim(),
@@ -334,4 +335,3 @@ exports.book_update_post = [
         }
     }
 ];
-
