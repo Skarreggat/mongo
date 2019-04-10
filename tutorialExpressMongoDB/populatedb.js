@@ -127,7 +127,7 @@ function prizeCreate(name, cb) {
 }
 
 
-function bookCreate(title, summary, isbn, author, genre, cb) {
+function bookCreate(title, summary, isbn, author, genre, prize, formato, cb) {
   bookdetail = {
     title: title,
     summary: summary,
@@ -135,6 +135,9 @@ function bookCreate(title, summary, isbn, author, genre, cb) {
     isbn: isbn
   }
   if (genre != false) bookdetail.genre = genre
+  if (prize != false) bookdetail.prize = prize
+  if (formato != false) bookdetail.formato = formato
+
 
   var book = new Book(bookdetail);
   book.save(function (err) {
