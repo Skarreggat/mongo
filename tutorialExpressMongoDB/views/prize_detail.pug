@@ -1,0 +1,18 @@
+extends layout
+
+block content
+
+  h1 Prize: #{prize.name}
+  
+  div(style='margin-left:20px;margin-top:20px')
+
+    h4 Books
+    
+    dl
+      each book in prize_books
+        dt 
+          a(href=book.url) #{book.title}
+        dd #{book.summary}
+
+      else
+        p This prize has no books

@@ -9,7 +9,8 @@ var BookSchema = new Schema(
     summary: {type: String, required: true},
     isbn: {type: String, required: true},
     genre: [{type: Schema.Types.ObjectId, ref: 'Genre'}],
-    formato:[{type: Schema.Types.ObjectId, ref: 'Formato'}]
+    formato:[{type: Schema.Types.ObjectId, ref: 'Formato'}],
+    prize:[{type: Schema.Types.ObjectId, ref: 'Prize'}]
   }
 );
 
