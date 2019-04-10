@@ -169,4 +169,34 @@ router.get('/prize/:id', prize_controller.prize_detail);
 // GET request for list of all Prize.
 router.get('/prizes', prize_controller.prize_list);
 
+
+
+/// FORMATOS ROUTES ///
+
+// GET request for creating a Formato. NOTE This must come before route that displays Formato (uses id).
+router.get('/formato/create', formato_controller.formato_create_get);
+
+//POST request for creating Formato.
+router.post('/formato/create', formato_controller.formato_create_post);
+
+// GET request to delete Formato.
+router.get('/formato/:id/delete', formato_controller.formato_delete_get);
+
+// POST request to delete Formato.
+router.post('/formato/:id/delete', formato_controller.formato_delete_post);
+
+// GET request to update Formato.
+router.get('/formato/:id/update', formato_controller.formato_update_get);
+
+// POST request to update Formato.
+router.post('/formato/:id/update', formato_controller.formato_update_post);
+
+// GET request for one Formato.
+router.get('/formato/:id', formato_controller.formato_detail);
+
+// GET request for list of all Formato.
+router.get('/formato', formato_controller.formato_list);
+
+
+
 module.exports = router;
