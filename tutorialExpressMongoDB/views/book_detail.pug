@@ -12,7 +12,12 @@ block content
       a(href=val.url) #{val.name}
       if index < book.genre.length - 1
         |, 
-  
+  p #[strong Formato:]&nbsp;
+    each val, index in book.formato
+      a(href=val.url) #{val.name}
+      if index < book.formato.length - 1
+        |,
+        
   div(style='margin-left:20px;margin-top:20px')
     h4 Copies
     

@@ -81,7 +81,7 @@ exports.formato_create_post = [
             // Data from form is valid.
             // Check if Genre with same name already exists.
             Formato.findOne({ 'name': req.body.name })
-                .exec( function(err, found_genre) {
+                .exec( function(err, found_formato) {
                      if (err) { return next(err); }
 
                      if (found_formato) {
@@ -115,7 +115,7 @@ exports.formato_delete_get = function(req, res, next) {
         },
     }, function(err, results) {
         if (err) { return next(err); }
-        if (results.genre==null) { // No results.
+        if (results.formato==null) { // No results.
             res.redirect('/catalog/formatos'); //genres== formatos??
         }
         // Successful, so render.
@@ -158,7 +158,7 @@ exports.formato_delete_post = function(req, res, next) {
 // Display Genre update form on GET.
 exports.formato_update_get = function(req, res, next) {
 
-    Formato.findById(req.params.id, function(err, genre) {
+    Formato.findById(req.params.id, function(err, formato) {
         if (err) { return next(err); }
         if (formato==null) { // No results.
             var err = new Error('Formato not found');
