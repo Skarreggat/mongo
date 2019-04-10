@@ -144,30 +144,3 @@ router.get('/country/:id', country_controller.country_detail);
 router.get('/countries', country_controller.country_list);
 
 module.exports = router;
-
-
-/// PRIZE ROUTES ///
-
-// GET request for creating a Prize. NOTE This must come before route that displays Prize (uses id).
-router.get('/prize/create', prize_controller.prize_create_get);
-
-//POST request for creating Prize.
-router.post('/prize/create', prize_controller.prize_create_post);
-
-// GET request to delete Prize.
-router.get('/prize/:id/delete', prize_controller.prize_delete_get);
-
-// POST request to delete Prize.
-router.post('/prize/:id/delete', prize_controller.prize_delete_post);
-
-// GET request to update Prize.
-router.get('/prize/:id/update', prize_controller.prize_update_get);
-
-// POST request to update Prize.
-router.post('/prize/:id/update', prize_controller.prize_update_post);
-
-// GET request for one Prize.
-router.get('/prize/:id', prize_controller.prize_detail);
-
-// GET request for list of all Prize.
-router.get('/prizes', prize_controller.prize_list);
