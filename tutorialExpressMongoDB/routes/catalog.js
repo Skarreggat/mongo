@@ -197,7 +197,7 @@ router.post('/formato/:id/update', formato_controller.formato_update_post);
 router.get('/formato/:id', formato_controller.formato_detail);
 
 // GET request for list of all Formato.
-router.get('/formato', formato_controller.formato_list);
+router.get('/formatos', formato_controller.formato_list);
 
 
 

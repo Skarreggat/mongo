@@ -8,12 +8,12 @@ const { sanitizeBody } = require('express-validator/filter');
 // Display list of all Genre.
 exports.formato_list = function(req, res, next) {
 
-  formato.find()
+  Formato.find()
     .sort([['name', 'ascending']])
     .exec(function (err, list_formatos) {//formatos o formato en el list==?
       if (err) { return next(err); }
       // Successful, so render.
-      res.render('formato_list', { title: 'Forato List', formato_list:  list_formatos}); //genres==formatos y fenre a formato?
+      res.render('formato_list', { title: 'Formato List', formato_list:  list_formatos}); //genres==formatos y fenre a formato?
     });
 
 };
@@ -147,7 +147,7 @@ exports.formato_delete_post = function(req, res, next) {
             Formato.findByIdAndRemove(req.body.id, function deleteFormato(err) {
                 if (err) { return next(err); }
                 // Success - go to genres list.
-                res.redirect('/catalog/Formatos'); //genres== formatos?
+                res.redirect('/catalog/formatos'); //genres== formatos?
             });
 
         }
@@ -202,7 +202,7 @@ exports.formato_update_post = [
         }
         else {
             // Data from form is valid. Update the record.
-            Formato.findByIdAndUpdate(req.params.id, formato, {}, function (err,thegenre) {
+            Formato.findByIdAndUpdate(req.params.id, formato, {}, function (err,theformato) {
                 if (err) { return next(err); }
                    // Successful - redirect to genre detail page.
                    res.redirect(theformato.url);
