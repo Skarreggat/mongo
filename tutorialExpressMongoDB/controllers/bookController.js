@@ -2,6 +2,8 @@ var Book = require('../models/book');
 var Author = require('../models/author');
 var Genre = require('../models/genre');
 var BookInstance = require('../models/bookinstance');
+var Prize = require('../models/prize');
+var Formato = require('../models/formato');
 
 const { body,validationResult } = require('express-validator/check');
 const { sanitizeBody } = require('express-validator/filter');
@@ -25,6 +27,12 @@ exports.index = function(req, res) {
         },
         genre_count: function(callback) {
             Genre.count(callback);
+        },
+        prize_count: function(callback) {
+            Prize.count(callback);
+        },
+        formato_count: function(callback) {
+            Formato.count(callback);
         },
     }, function(err, results) {
         res.render('index', { title: 'Local Library Home', error: err, data: results });
