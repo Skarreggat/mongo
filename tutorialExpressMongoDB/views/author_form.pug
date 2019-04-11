@@ -17,20 +17,19 @@ block content
       input#date_of_death.form-control(type='date' name='date_of_death' value=(undefined===author ? '' : author.date_of_death) )
     div.form-group
       label(for='country') Country:
-      select#country.form-control(type='select' placeholder="Mi Españita" name='country' required='true' )
+      select#country.form-control(type='select' placeholder='Select country' name='country' required='true' )
         for country in countries
-              if country
-                //- Handle GET form, where country.author is an object, and POST form, where it is a string.
-                option(
-                  value=author._id
-                  selected=(
-                    author._id.toString()==country.author._id
-                    || author._id.toString()==country.author
-                  ) ? 'selected' : false
-                ) #{author.name}
-              else
-                option(value=author._id) #{author.name}
-        
+          if author
+            //- Handle GET form, where book.author is an object, and POST form, where it is a string.
+            option(
+              value=country._id
+              selected=(
+                country._id.toString()==author.country._id
+                || country._id.toString()==author.country
+              ) ? 'selected' : false
+            ) #{country.name}
+          else
+            option(value=country._id) #{country.name}
     button.btn.btn-primary(type='submit') Submit
   if errors 
     ul

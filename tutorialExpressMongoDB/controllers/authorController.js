@@ -52,18 +52,13 @@ exports.author_detail = function (req, res, next) {
 exports.author_create_get = function (req, res, next) {
   async.parallel({
       countries: function (callback) {
-          Country.find()
-              .exec(callback)
+          Country.find(callback);
       }
   }, function (err, results) {
       if (err) { return next(err); } // Error in API usage.
-      if (results.author == null) { // No results.
-          var err = new Error('Author not found');
-          err.status = 404;
-          return next(err);
-      }
+
       // Successful, so render.
-      res.render('author_form', { title: 'Create Author' , countries: result.countries});
+      res.render('author_form', { title: 'Create Author' , countries: results.countries});
   });
 };
 
