@@ -212,6 +212,33 @@ function createGenreAuthorsCountries(cb) {
         function(callback) {
           genreCreate("French Poetry", callback);
         },
+        ///////ALEX///////////////////////
+        function(callback) {
+          formatoCreate("CD", callback);
+        },
+        function(callback) {
+          formatoCreate("DVD", callback);
+        },
+        function(callback) {
+          formatoCreate("E-BOOK", callback);
+        },
+        function(callback) {
+          formatoCreate("i-tonto", callback);
+        },
+
+        //////////////////////////////////
+        function(callback) {
+          prizeCreate("Premio Nobel", callback);
+        },
+        function(callback) {
+          prizeCreate("Premio Cervantes", callback);
+        },
+        function(callback) {
+          prizeCreate("Premio Nadal", callback);
+        },
+        function(callback) {
+          prizeCreate("Premio Planeta", callback);
+        },
         ],
         // optional callback
         cb);
@@ -219,33 +246,6 @@ function createGenreAuthorsCountries(cb) {
 
 function createBooks(cb) {
     async.parallel([
-      ///////ALEX///////////////////////
-      function(callback) {
-        formatoCreate("CD", callback);
-      },
-      function(callback) {
-        formatoCreate("DVD", callback);
-      },
-      function(callback) {
-        formatoCreate("E-BOOK", callback);
-      },
-      function(callback) {
-        formatoCreate("i-tonto", callback);
-      },
-
-      //////////////////////////////////
-      function(callback) {
-        prizeCreate("Premio Nobel", callback);
-      },
-      function(callback) {
-        prizeCreate("Premio Cervantes", callback);
-      },
-      function(callback) {
-        prizeCreate("Premio Nadal", callback);
-      },
-      function(callback) {
-        prizeCreate("Premio Planeta", callback);
-      },
         function(callback) {
           bookCreate('The Name of the Wind (The Kingkiller Chronicle, #1)', 'I have stolen princesses back from sleeping barrow kings. I burned down the town of Trebon. I have spent the night with Felurian and left with both my sanity and my life. I was expelled from the University at a younger age than most people are allowed in. I tread paths by moonlight that others fear to speak of during day. I have talked to Gods, loved women, and written songs that make the minstrels weep.', '9781473211896', authors[0], [genres[0],],[formatos[0],formatos[1]], [prizes[0],prizes[1]], callback);
         },
