@@ -39,18 +39,62 @@ exports.index = function(req, res) {
     });
 };
 
-
 // Display list of all books.
 exports.book_list = function(req, res, next) {
+  //Coger por GET los params de paginación / ordenación
+  var url = require('url')
+    , qs = require('querystring')
+    , params = qs.parse(url.parse(req.url).query)
+    , str = ''
 
-  Book.find({}, 'title author ')
+  //Variables de paginación
+  var perPage = 5;
+  var page = params.page > 0 ? params.page : 0;
+  var count = 0;
+
+  //Variables de ordenación
+  var sortParams = params.sort;
+  var sortProperty = { sortParams : 'asc' };
+
+  //Crea enlaces paginación
+  res.locals.createPagination = function (pages, page) {
+    str = ''
+    params.page = 0;
+    //Crea enlaces con páginas y | entre ellos
+    for(var i = 0; i  <= pages; i++){
+      params.page = i;
+      str += '<a href="?'+qs.stringify(params)+'">'+ (i+1) +'</a>'
+      if(i < pages - 1){
+        str += ' | ';
+      }
+    }
+    return str
+  }
+
+  //Crea THs con ordenación
+  res.locals.createOrdering = function () {
+    str = ''
+    //Valores de sorteo y nombre de los campos
+    var sortValue = ['title', 'author.first_name']
+    var sortName = ['Title', 'Author']
+
+    //Crear THs
+    for(var z = 0; z  < sortValue.length; z++){
+      str += '<th><a class="sortLink" href="?sort='+sortValue[z]+'&page=0">'+sortName[z]+'</a></th>'
+    }
+    return str
+  }
+
+  Book.find({}, 'title author')
+    .sort(sortParams)
+    .limit(perPage)
+    .skip(perPage * page)
     .populate('author')
     .exec(function (err, list_books) {
-      if (err) { return next(err); }
-      // Successful, so render
-      res.render('book_list', { title: 'Book List', book_list:  list_books});
+        Book.countDocuments().exec(function(err, count){
+          res.render('book_list', { title: 'Book List', book_list:  list_books, page: page, pages: count / perPage, count: count});
+        });
     });
-
 };
 
 // Display detail page for a specific book.
