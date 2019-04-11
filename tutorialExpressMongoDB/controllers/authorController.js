@@ -107,8 +107,19 @@ exports.author_create_get = function (req, res, next) {
 };
 
 // Handle Author create on POST.
+// Handle Author create on POST.
 exports.author_create_post = [
 
+  // Convert the country to an array.
+  (req, res, next) => {
+      if(!(req.body.country instanceof Array)){
+          if(typeof req.body.country==='undefined')
+          req.body.country=[];
+          else
+          req.body.country=new Array(req.body.country);
+      }
+      next();
+  },
     // Validate fields.
     body('first_name').isLength({ min: 1 }).trim().withMessage('First name must be specified.')
         .isAlphanumeric().withMessage('First name has non-alphanumeric characters.'),
@@ -122,6 +133,8 @@ exports.author_create_post = [
     sanitizeBody('family_name').escape(),
     sanitizeBody('date_of_birth').toDate(),
     sanitizeBody('date_of_death').toDate(),
+    sanitizeBody('*').escape(),
+    sanitizeBody('genre.*').escape(),
 
     // Process request after validation and sanitization.
     (req, res, next) => {
@@ -136,12 +149,30 @@ exports.author_create_post = [
                 family_name: req.body.family_name,
                 date_of_birth: req.body.date_of_birth,
                 date_of_death: req.body.date_of_death,
+                country: req.body.country
             }
         );
 
         if (!errors.isEmpty()) {
+
+          // Get all authors and genres for form.
+          async.parallel({
+
+              countries: function(callback) {
+                  Country.find(callback);
+              },
+          }, function(err, results) {
+              if (err) { return next(err); }
+
+              // Mark our selected genres as checked.
+              for (let i = 0; i < results.countries.length; i++) {
+                  if (author.country.indexOf(results.countries[i]._id) > -1) {
+                      results.countries[i].checked='true';
+                  }
+              }
             // There are errors. Render form again with sanitized values/errors messages.
             res.render('author_form', { title: 'Create Author', author: author, errors: errors.array() });
+            });
             return;
         }
         else {
@@ -156,7 +187,6 @@ exports.author_create_post = [
         }
     }
 ];
-
 
 
 // Display Author delete form on GET.
