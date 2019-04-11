@@ -8,9 +8,53 @@ const { sanitizeBody } = require('express-validator/filter');
 
 // Display list of all Authors.
 exports.author_list = function (req, res, next) {
+  //Coger por GET los params de paginación / ordenación
+  var url = require('url')
+    , qs = require('querystring')
+    , params = qs.parse(url.parse(req.url).query)
+    , str = ''
 
+  //Variables de paginación
+  var perPage = 5;
+  var page = params.page > 0 ? params.page : 0;
+  var count = 0;
+
+  //Variables de ordenación
+  var sortParams = params.sort;
+  var sortProperty = { sortParams : 'asc' };
+
+  //Crea enlaces paginación
+  res.locals.createPagination = function (pages, page) {
+    str = ''
+    params.page = 0;
+    //Crea enlaces con páginas y | entre ellos
+    for(var i = 0; i  <= pages; i++){
+      params.page = i;
+      str += '<a href="?'+qs.stringify(params)+'">'+ (i+1) +'</a>'
+      if(i < pages - 1){
+        str += ' | ';
+      }
+    }
+    return str
+  }
+
+  //Crea THs con ordenación
+  res.locals.createOrdering = function () {
+    str = ''
+    //Valores de sorteo y nombre de los campos
+    var sortValue = ['first_name', 'date_of_birth']
+    var sortName = ['First Name', 'Birthdate']
+
+    //Crear THs
+    for(var z = 0; z  < sortValue.length; z++){
+      str += '<th><a class="sortLink" href="?sort='+sortValue[z]+'&page=0">'+sortName[z]+'</a></th>'
+    }
+    return str
+  }
     Author.find()
-        .sort([['family_name', 'ascending']])
+        .sort(sortParams)
+        .limit(perPage)
+        .skip(perPage * page)
         .exec(function (err, list_authors) {
             if (err) { return next(err); }
             // Successful, so render.
