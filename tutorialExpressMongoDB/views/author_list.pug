@@ -1,19 +1,19 @@
 extends layout
 
 block content
-  h1= title
-  
-  p Results: #{count}
-  table.table
-    tr
-      != createOrdering()
-    each author in author_list
+    h1= title
+    
+    p Results: #{count}
+    table.table
       tr
-        td
-          a(href=author.url) #{author.name} 
-        td #{author.date_of_birth_formatted} - #{author.date_of_death_formatted}
+        != createOrdering()
+      each author in author_list
+        tr
+          td
+            a(href=author.url) #{author.name} 
+          td #{author.date_of_birth_formatted} - #{author.date_of_death_formatted}
 
-  if (pages > 1)
-  .container
-    .pagination
-      != createPagination(pages, page)
+    if (pages > 1)
+    .container
+      .pagination
+        != createPagination(pages, page)
