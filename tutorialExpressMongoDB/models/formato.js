@@ -6,7 +6,7 @@ var FormatoSchema = new Schema({
     name: {type: String, required: true, min: 3, max: 100}
 });
 
-// Virtual for this genre instance URL.
+// Virtual for this formato instance URL.
 FormatoSchema
 .virtual('url')
 .get(function () {

@@ -121,7 +121,7 @@ exports.prize_create_get = function (req, res, next) {
     });
 };
 
-// Handle Genre create on POST.
+// Handle prize create on POST.
 exports.prize_create_post = [
 
     // Validate that the name field is not empty.
@@ -138,7 +138,7 @@ exports.prize_create_post = [
         // Extract the validation errors from a request.
         const errors = validationResult(req);
 
-        // Create a genre object with escaped and trimmed data.
+        // Create a prize object with escaped and trimmed data.
         var prize = new Prize({
             name: req.body.name
         });

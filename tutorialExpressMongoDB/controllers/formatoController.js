@@ -10,7 +10,7 @@ const {
     sanitizeBody
 } = require('express-validator/filter');
 
-// Display list of all Genre.
+// Display list of all formatos.
 exports.formato_list = function (req, res, next) {
     //Coger por GET los params de paginación / ordenación
     var url = require('url'),
@@ -76,7 +76,7 @@ exports.formato_list = function (req, res, next) {
 
 };
 
-// Display detail page for a specific Genre.
+// detalle de cada formato.
 exports.formato_detail = function (req, res, next) {
 
     async.parallel({
@@ -112,14 +112,14 @@ exports.formato_detail = function (req, res, next) {
 
 };
 
-// Display Genre create form on GET.
+// Display Formato create form on GET.
 exports.formato_create_get = function (req, res, next) {
     res.render('formato_form', {
         title: 'Create Formato'
     });
 };
 
-// Handle Genre create on POST.
+// Handle Formato create on POST.
 exports.formato_create_post = [
 
     // Validate that the name field is not empty.
@@ -136,7 +136,7 @@ exports.formato_create_post = [
         // Extract the validation errors from a request.
         const errors = validationResult(req);
 
-        // Create a genre object with escaped and trimmed data.
+        // Create a Formato object with escaped and trimmed data.
         var formato = new Formato({
             name: req.body.name
         });
@@ -152,7 +152,7 @@ exports.formato_create_post = [
             return;
         } else {
             // Data from form is valid.
-            // Check if Genre with same name already exists.
+            // Check if Formato with same name already exists.
             Formato.findOne({
                     'name': req.body.name
                 })
@@ -162,7 +162,7 @@ exports.formato_create_post = [
                     }
 
                     if (found_formato) {
-                        // Genre exists, redirect to its detail page.
+                        // el formato existe, redirigimos a su pagina de detalle
                         res.redirect(found_formato.url);
                     } else {
 
@@ -170,7 +170,7 @@ exports.formato_create_post = [
                             if (err) {
                                 return next(err);
                             }
-                            // Genre saved. Redirect to genre detail page.
+                            // Formato saved. Redirect to Formato detail page.
                             res.redirect(formato.url);
                         });
 
@@ -181,7 +181,7 @@ exports.formato_create_post = [
     }
 ];
 
-// Display Genre delete form on GET.
+// Display Formato delete form on GET.
 exports.formato_delete_get = function (req, res, next) {
 
     async.parallel({
@@ -210,7 +210,7 @@ exports.formato_delete_get = function (req, res, next) {
 
 };
 
-// Handle Genre delete on POST.
+// Handle Formato delete on POST.
 exports.formato_delete_post = function (req, res, next) {
 
     async.parallel({
@@ -228,7 +228,7 @@ exports.formato_delete_post = function (req, res, next) {
         }
         // Success
         if (results.formato_books.length > 0) {
-            // Genre has books. Render in same way as for GET route.
+            // Formato has books. Render in same way as for GET route.
             res.render('formato_delete', {
                 title: 'Delete Formato',
                 formato: results.formato,
@@ -236,12 +236,12 @@ exports.formato_delete_post = function (req, res, next) {
             });
             return;
         } else {
-            // Genre has no books. Delete object and redirect to the list of genres.
+            // Formato has no books. Delete object and redirect to the list of Formatos.
             Formato.findByIdAndRemove(req.body.id, function deleteFormato(err) {
                 if (err) {
                     return next(err);
                 }
-                // Success - go to genres list.
+                // Success - go to formatos list.
                 res.redirect('/catalog/formatos'); //genres== formatos?
             });
 
@@ -250,7 +250,7 @@ exports.formato_delete_post = function (req, res, next) {
 
 };
 
-// Display Genre update form on GET.
+// Display formatos update form on GET.
 exports.formato_update_get = function (req, res, next) {
 
     Formato.findById(req.params.id, function (err, formato) {
@@ -271,7 +271,7 @@ exports.formato_update_get = function (req, res, next) {
 
 };
 
-// Handle Genre update on POST.
+// Handle formatos update on POST.
 exports.formato_update_post = [
 
     // Validate that the name field is not empty.
@@ -288,7 +288,7 @@ exports.formato_update_post = [
         // Extract the validation errors from a request .
         const errors = validationResult(req);
 
-        // Create a genre object with escaped and trimmed data (and the old id!)
+        // Create a formato object with escaped and trimmed data (and the old id!)
         var formato = new Formato({
             name: req.body.name,
             _id: req.params.id
@@ -309,7 +309,7 @@ exports.formato_update_post = [
                 if (err) {
                     return next(err);
                 }
-                // Successful - redirect to genre detail page.
+                // Successful - redirect to formato detail page.
                 res.redirect(theformato.url);
             });
         }
