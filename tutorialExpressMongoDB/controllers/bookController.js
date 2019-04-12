@@ -139,9 +139,15 @@ exports.book_create_get = function(req, res, next) {
         genres: function(callback) {
             Genre.find(callback);
         },
+        formatos: function(callback) {
+            Formato.find(callback);
+        },
+        prizes: function(callback) {
+            Prize.find(callback);
+        },
     }, function(err, results) {
         if (err) { return next(err); }
-        res.render('book_form', { title: 'Create Book',authors:results.authors, genres:results.genres });
+        res.render('book_form', { title: 'Create Book',authors:results.authors, genres:results.genres, formatos:results.formatos, prizes:results.prizes});
     });
 
 };
@@ -156,6 +162,19 @@ exports.book_create_post = [
             else
             req.body.genre=new Array(req.body.genre);
         }
+        //no seguro de lo siguiente
+        if(!(req.body.formato instanceof Array)){
+            if(typeof req.body.formato==='undefined')
+            req.body.formato=[];
+            else
+            req.body.formato=new Array(req.body.formato);
+        }
+        if(!(req.body.prize instanceof Array)){
+            if(typeof req.body.prize==='undefined')
+            req.body.prize=[];
+            else
+            req.body.prize=new Array(req.body.prize);
+        }
         next();
     },
 
@@ -168,6 +187,8 @@ exports.book_create_post = [
     // Sanitize fields.
     sanitizeBody('*').escape(),
     sanitizeBody('genre.*').escape(),
+    sanitizeBody('formato.*').escape(),
+    sanitizeBody('prize.*').escape(),
     // Process request after validation and sanitization.
     (req, res, next) => {
 
@@ -181,7 +202,9 @@ exports.book_create_post = [
             author: req.body.author,
             summary: req.body.summary,
             isbn: req.body.isbn,
-            genre: req.body.genre
+            genre: req.body.genre,
+            formato: req.body.formato,
+            prize: req.body.prize
            });
 
         if (!errors.isEmpty()) {
@@ -195,6 +218,12 @@ exports.book_create_post = [
                 genres: function(callback) {
                     Genre.find(callback);
                 },
+                formatos: function(callback) {
+                    Formato.find(callback);
+                },
+                prizes: function(callback) {
+                    Prize.find(callback);
+                },
             }, function(err, results) {
                 if (err) { return next(err); }
 
@@ -204,7 +233,19 @@ exports.book_create_post = [
                         results.genres[i].checked='true';
                     }
                 }
-                res.render('book_form', { title: 'Create Book',authors:results.authors, genres:results.genres, book: book, errors: errors.array() });
+                // Mark our selected formatos as checked.
+                for (let i = 0; i < results.formatos.length; i++) {
+                    if (book.formato.indexOf(results.formatos[i]._id) > -1) {
+                        results.formatos[i].checked='true';
+                    }
+                }
+                // Mark our selected prizes as checked.
+                for (let i = 0; i < results.prizes.length; i++) {
+                    if (book.prize.indexOf(results.prizes[i]._id) > -1) {
+                        results.prizes[i].checked='true';
+                    }
+                }
+                res.render('book_form', { title: 'Create Book',authors:results.authors, genres:results.genres, formatos:results.formatos, prizes:results.prizes, book: book, errors: errors.array() });
             });
             return;
         }

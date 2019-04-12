@@ -35,6 +35,20 @@ block content
           div(style='display: inline; padding-right:10px;')
             input.checkbox-input(type='checkbox', name='genre', id=genre._id, value=genre._id, checked=genre.checked )
             label(for=genre._id) #{genre.name}
+    div.form-group
+      label Formato:
+      div
+        for formato in formatos
+          div(style='display: inline; padding-right:10px;')
+            input.checkbox-input(type='checkbox', name='formato', id=formato._id, value=formato._id, checked=formato.checked )
+            label(for=formato._id) #{formato.name}
+    div.form-group
+      label Prize:
+      div
+        for prize in prizes
+          div(style='display: inline; padding-right:10px;')
+            input.checkbox-input(type='checkbox', name='prize', id=prize._id, value=prize._id, checked=prize.checked )
+            label(for=prize._id) #{prize.name}
     button.btn.btn-primary(type='submit') Submit
 
   if errors 
