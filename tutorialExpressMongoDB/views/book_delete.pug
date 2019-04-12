@@ -36,7 +36,24 @@ block content
             p #[strong Due back:] #{book_copy.due_back}
           p #[strong Id:] 
             a(href=book_copy.url) #{book_copy._id}
-
+  
+  hr
+  else if book_formatos.length
+    p #[strong Delete the following formatos before attempting to delete this Book.]
+    div(style='margin-left:20px;margin-top:20px')
+      h4 Formatos  
+        each book_formato in book_formatos
+          dt 
+            a(href=formato.url) #{formato.name}
+  hr
+  else if prizes.length
+    p #[strong Delete the following prizes before attempting to delete this Book.]
+    div(style='margin-left:20px;margin-top:20px')
+      h4 Prizes  
+        each book_prize in book_prizes
+          dt 
+            a(href=prize.url) #{prize.name}
+    
   else
     p Do you really want to delete this Book?
     
