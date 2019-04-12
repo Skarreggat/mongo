@@ -106,6 +106,8 @@ exports.book_detail = function(req, res, next) {
             Book.findById(req.params.id)
               .populate('author')
               .populate('genre')
+              .populate('formato')
+              .populate('prize')
               .exec(callback);
         },
         book_instance: function(callback) {
