@@ -2,18 +2,76 @@ var Country = require('../models/countries')
 var async = require('async')
 var Author = require('../models/author')
 
-const { body, validationResult } = require('express-validator/check');
-const { sanitizeBody } = require('express-validator/filter');
+const {
+    body,
+    validationResult
+} = require('express-validator/check');
+const {
+    sanitizeBody
+} = require('express-validator/filter');
 
 // Display list of all Countries.
 exports.country_list = function (req, res, next) {
+    //Coger por GET los params de paginación / ordenación
+    var url = require('url'),
+        qs = require('querystring'),
+        params = qs.parse(url.parse(req.url).query),
+        str = ''
 
+    //Variables de paginación
+    var perPage = 5;
+    var page = params.page > 0 ? params.page : 0;
+    var count = 0;
+
+    //Variables de ordenación
+    var sortParams = params.sort;
+    var sortProperty = {
+        sortParams: 'asc'
+    };
+
+    //Crea enlaces paginación
+    res.locals.createPagination = function (pages, page) {
+        str = ''
+        params.page = 0;
+        //Crea enlaces con páginas y | entre ellos
+        for (var i = 0; i < pages; i++) {
+            params.page = i;
+            str += '<a href="?' + qs.stringify(params) + '">' + (i + 1) + '</a>'
+            if (i < pages - 1) {
+                str += ' | ';
+            }
+        }
+        return str
+    }
+
+    //Crea THs con ordenación
+    res.locals.createOrdering = function () {
+        str = ''
+        //Valores de sorteo y nombre de los campos
+        var sortValue = ['name', 'continent']
+        var sortName = ['Name', 'Continent']
+
+        //Crear THs
+        for (var z = 0; z < sortValue.length; z++) {
+            str += '<th><a class="sortLink" href="?sort=' + sortValue[z] + '&page=0">' + sortName[z] + '</a></th>'
+        }
+        return str
+    }
     Country.find()
-        .sort([['name', 'ascending']])
-        .exec(function (err, list_countries) {
-            if (err) { return next(err); }
-            // Successful, so render.
-            res.render('country_list', { title: 'Country List', country_list: list_countries });
+        .sort(sortParams)
+        .exec(function (err, list_countries, count) {
+            if (err) {
+                return next(err);
+            }
+            Country.countDocuments().exec(function (err, count) {
+                res.render('country_list', {
+                    title: 'Country List',
+                    country_list: list_countries,
+                    page: page,
+                    pages: count / perPage,
+                    count: count
+                });
+            })
         })
 
 };
@@ -27,35 +85,49 @@ exports.country_detail = function (req, res, next) {
                 .exec(callback)
         },
         countries_authors: function (callback) {
-            Author.find({ 'country': req.params.id })
+            Author.find({
+                    'country': req.params.id
+                })
                 .exec(callback)
         },
     }, function (err, results) {
-        if (err) { return next(err); } // Error in API usage.
+        if (err) {
+            return next(err);
+        } // Error in API usage.
         if (results.country == null) { // No results.
             var err = new Error('Country not found');
             err.status = 404;
             return next(err);
         }
         // Successful, so render.
-        res.render('country_detail', { title: 'Country Detail', country: results.country, country_authors: results.countries_authors });
+        res.render('country_detail', {
+            title: 'Country Detail',
+            country: results.country,
+            country_authors: results.countries_authors
+        });
     });
 
 };
 
 // Display Author create form on GET.
 exports.country_create_get = function (req, res, next) {
-    res.render('country_form', { title: 'Create Country' });
+    res.render('country_form', {
+        title: 'Create Country'
+    });
 };
 
 // Handle Author create on POST.
 exports.country_create_post = [
 
     // Validate fields.
-    body('name').isLength({ min: 1 }).trim().withMessage('Name must be specified.')
-        .isAlphanumeric().withMessage('Name has non-alphanumeric characters.'),
-    body('continent').isLength({ min: 1 }).trim().withMessage('Continent must be specified.')
-        .isAlphanumeric().withMessage('Continent has non-alphanumeric characters.'),
+    body('name').isLength({
+        min: 1
+    }).trim().withMessage('Name must be specified.')
+    .isAlphanumeric().withMessage('Name has non-alphanumeric characters.'),
+    body('continent').isLength({
+        min: 1
+    }).trim().withMessage('Continent must be specified.')
+    .isAlphanumeric().withMessage('Continent has non-alphanumeric characters.'),
 
     // Sanitize fields.
     sanitizeBody('name').escape(),
@@ -68,24 +140,27 @@ exports.country_create_post = [
         const errors = validationResult(req);
 
         // Create country object with escaped and trimmed data
-        var country = new Country(
-            {
-                name: req.body.name,
-                continent: req.body.continent,
-            }
-        );
+        var country = new Country({
+            name: req.body.name,
+            continent: req.body.continent,
+        });
 
         if (!errors.isEmpty()) {
             // There are errors. Render form again with sanitized values/errors messages.
-            res.render('country_form', { title: 'Create Country', country: country, errors: errors.array() });
+            res.render('country_form', {
+                title: 'Create Country',
+                country: country,
+                errors: errors.array()
+            });
             return;
-        }
-        else {
+        } else {
             // Data from form is valid.
 
             // Save country.
             country.save(function (err) {
-                if (err) { return next(err); }
+                if (err) {
+                    return next(err);
+                }
                 // Successful - redirect to new country record.
                 res.redirect(country.url);
             });
@@ -103,15 +178,23 @@ exports.country_delete_get = function (req, res, next) {
             Country.findById(req.params.id).exec(callback)
         },
         countries_authors: function (callback) {
-            Author.find({ 'first_name': req.params.id }).exec(callback)
+            Author.find({
+                'first_name': req.params.id
+            }).exec(callback)
         },
     }, function (err, results) {
-        if (err) { return next(err); }
+        if (err) {
+            return next(err);
+        }
         if (results.country == null) { // No results.
             res.redirect('/catalog/country');
         }
         // Successful, so render.
-        res.render('country_delete', { title: 'Delete Country', country: results.country, country_authors: results.countries_authors });
+        res.render('country_delete', {
+            title: 'Delete Country',
+            country: results.country,
+            country_authors: results.countries_authors
+        });
     });
 
 };
@@ -124,21 +207,30 @@ exports.country_delete_post = function (req, res, next) {
             Country.findById(req.body.countryid).exec(callback)
         },
         countries_authors: function (callback) {
-            Author.find({ 'first_name': req.body.countryid }).exec(callback)//nosee*******************************
+            Author.find({
+                'first_name': req.body.countryid
+            }).exec(callback) //nosee*******************************
         },
     }, function (err, results) {
-        if (err) { return next(err); }
+        if (err) {
+            return next(err);
+        }
         // Success.
         if (results.countries_authors.length > 0) {
-            res.render('country_delete', { title: 'Delete Country', country: results.country, country_authors: results.countries_authors });
+            res.render('country_delete', {
+                title: 'Delete Country',
+                country: results.country,
+                country_authors: results.countries_authors
+            });
             return;
-        }
-        else {
+        } else {
             // Author has no books. Delete object and redirect to the list of authors.
             Country.findByIdAndRemove(req.body.countryid, function deleteCountry(err) {
-                if (err) { return next(err); }
+                if (err) {
+                    return next(err);
+                }
                 // Success - go to author list.
-                res.redirect('/catalog/countries')//*******************************************************
+                res.redirect('/catalog/countries') //*******************************************************
             })
 
         }
@@ -150,14 +242,19 @@ exports.country_delete_post = function (req, res, next) {
 exports.country_update_get = function (req, res, next) {
 
     Country.findById(req.params.id, function (err, country) {
-        if (err) { return next(err); }
+        if (err) {
+            return next(err);
+        }
         if (country == null) { // No results.
             var err = new Error('Country not found');
             err.status = 404;
             return next(err);
         }
         // Success.
-        res.render('country_form', { title: 'Update Country', country: country });
+        res.render('country_form', {
+            title: 'Update Country',
+            country: country
+        });
 
     });
 };
@@ -166,10 +263,14 @@ exports.country_update_get = function (req, res, next) {
 exports.country_update_post = [
 
     // Validate fields.
-    body('name').isLength({ min: 1 }).trim().withMessage('Name must be specified.')
-        .isAlphanumeric().withMessage('Name has non-alphanumeric characters.'),
-    body('continent').isLength({ min: 1 }).trim().withMessage('Continent must be specified.')
-        .isAlphanumeric().withMessage('Continent has non-alphanumeric characters.'),
+    body('name').isLength({
+        min: 1
+    }).trim().withMessage('Name must be specified.')
+    .isAlphanumeric().withMessage('Name has non-alphanumeric characters.'),
+    body('continent').isLength({
+        min: 1
+    }).trim().withMessage('Continent must be specified.')
+    .isAlphanumeric().withMessage('Continent has non-alphanumeric characters.'),
 
     // Sanitize fields.
     sanitizeBody('name').escape(),
@@ -182,23 +283,26 @@ exports.country_update_post = [
         const errors = validationResult(req);
 
         // Create Author object with escaped and trimmed data (and the old id!)
-        var country = new Country(
-            {
-                name: req.body.name,
-                continent: req.body.continent,
-                _id: req.params.id
-            }
-        );
+        var country = new Country({
+            name: req.body.name,
+            continent: req.body.continent,
+            _id: req.params.id
+        });
 
         if (!errors.isEmpty()) {
             // There are errors. Render the form again with sanitized values and error messages.
-            res.render('country_form', { title: 'Update Country', country: country, errors: errors.array() });
+            res.render('country_form', {
+                title: 'Update Country',
+                country: country,
+                errors: errors.array()
+            });
             return;
-        }
-        else {
+        } else {
             // Data from form is valid. Update the record.
             Country.findByIdAndUpdate(req.params.id, country, {}, function (err, thecountry) {
-                if (err) { return next(err); }
+                if (err) {
+                    return next(err);
+                }
                 // Successful - redirect to genre detail page.
                 res.redirect(thecountry.url);
             });
