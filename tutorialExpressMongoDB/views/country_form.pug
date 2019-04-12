@@ -8,7 +8,7 @@ block content
       label(for='name') Name:
       input#name.form-control(type='text' placeholder='name (Españita) last' name='name' required='true' value=(undefined===country ? '' : country.name) )
       label(for='continent') Continent:
-      input#continent.form-control(type='text' placeholder='continent (Europa)' name='continent')
+      input#continent.form-control(type='text' placeholder='continent (Europa)' name='continent' value=(undefined===country ? '' : country.continent)
     button.btn.btn-primary(type='submit') Submit
   if errors 
     ul
