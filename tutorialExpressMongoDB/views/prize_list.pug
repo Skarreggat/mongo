@@ -1,11 +1,17 @@
 extends layout
-
 block content
-  h1= title
-  
-  ul
-    each prize in prize_list
-      li 
-        a(href=prize.url) #{prize.name}
-    else
-      li There are no prizes.
+    h1= title
+    
+    p Results: #{count}
+    table.table
+      tr
+        != createOrdering()
+      each prize in prize_list
+        tr
+          td
+            a(href=prize.url) #{prize.name} 
+
+    if (pages > 1)
+    .container
+      .pagination
+        != createPagination(pages, page)

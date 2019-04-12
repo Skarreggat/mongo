@@ -66,7 +66,7 @@ exports.author_list = function (req, res, next) {
             if (err) {
                 return next(err);
             }
-            Book.countDocuments().exec(function (err, count) {
+            Author.countDocuments().exec(function (err, count) {
                 res.render('author_list', {
                     title: 'Author List',
                     author_list: list_authors,
