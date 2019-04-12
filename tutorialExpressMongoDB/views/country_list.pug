@@ -1,13 +1,19 @@
 extends layout
 
 block content
-  h1= title
-  
-  ul
-    each country in country_list
-      li 
-        a(href=country.url) #{country.name} 
-        |  (#{country.continent})
+    h1= title
+    
+    p Results: #{count}
+    table.table
+      tr
+        != createOrdering()
+      each country in country_list
+        tr
+          td
+            a(href=country.url) #{country.name} 
+          td #{country.continent}
 
-    else
-      li There are no countries.
+    if (pages > 1)
+    .container
+      .pagination
+        != createPagination(pages, page)
