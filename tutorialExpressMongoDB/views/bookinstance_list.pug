@@ -1,21 +1,26 @@
 extends layout
 
 block content
-  h1= title
+    h1= title
+    
+    p Results: #{count}
+    table.table
+      tr
+        != createOrdering()
+      each bi in bookinstance_list
+        tr
+          td
+            a(href=bi.url) #{bi.book.title}
+          td #{bi.imprint}
+          if bi.status=='Available'
+            td.text-success #{bi.status}
+          else if bi.status=='Maintenance'
+            td.text-danger #{bi.status}
+          else
+            td.text-danger Maintenance
+          td #{bi.due_back_formatted}
 
-  ul
-    each val in bookinstance_list
-      li 
-        a(href=val.url) #{val.book.title} : #{val.imprint} - 
-        if val.status=='Available'
-          span.text-success #{val.status}
-        else if val.status=='Maintenance'
-          span.text-danger #{val.status}
-        else
-          span.text-warning #{val.status} 
-        if val.status!='Available'
-          //- span  (Due: #{val.due_back} )
-          span  (Due: #{val.due_back_formatted} )
-
-    else
-      li There are no book copies in this library.
+    if (pages > 1)
+    .container
+      .pagination
+        != createPagination(pages, page)
