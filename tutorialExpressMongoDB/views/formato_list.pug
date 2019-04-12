@@ -1,11 +1,18 @@
 extends layout
 
 block content
-  h1= title
-  
-  ul
-    each formato in formato_list
-      li 
-        a(href=formato.url) #{formato.name}
-    else
-      li There are no formats.
+    h1= title
+    
+    p Results: #{count}
+    table.table
+      tr
+        != createOrdering()
+      each formato in formato_list
+        tr
+          td
+            a(href=formato.url) #{formato.name} 
+
+    if (pages > 1)
+    .container
+      .pagination
+        != createPagination(pages, page)
