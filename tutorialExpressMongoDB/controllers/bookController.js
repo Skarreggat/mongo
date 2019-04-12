@@ -320,16 +320,22 @@ exports.book_delete_post = function(req, res, next) {
 // Display book update form on GET.
 exports.book_update_get = function(req, res, next) {
 
-    // Get book, authors and genres for form.
+    // Get book, authors,genres,formatos,prizes for form.
     async.parallel({
         book: function(callback) {
-            Book.findById(req.params.id).populate('author').populate('genre').exec(callback);
+            Book.findById(req.params.id).populate('author').populate('genre').populate('formato').populate('prize').exec(callback);
         },
         authors: function(callback) {
             Author.find(callback);
         },
         genres: function(callback) {
             Genre.find(callback);
+        },
+        formatos: function(callback) {
+            Formato.find(callback);
+        },
+        prizes: function(callback) {
+            Prize.find(callback);
         },
         }, function(err, results) {
             if (err) { return next(err); }
@@ -347,7 +353,23 @@ exports.book_update_get = function(req, res, next) {
                     }
                 }
             }
-            res.render('book_form', { title: 'Update Book', authors:results.authors, genres:results.genres, book: results.book });
+            // Mark our selected formatos as checked.
+            for (var all_g_iter = 0; all_g_iter < results.formatos.length; all_g_iter++) {
+                for (var book_g_iter = 0; book_g_iter < results.book.formato.length; book_g_iter++) {
+                    if (results.formatos[all_g_iter]._id.toString()==results.book.formato[book_g_iter]._id.toString()) {
+                        results.formatos[all_g_iter].checked='true';
+                    }
+                }
+            }
+            // Mark our selected prizes as checked.
+            for (var all_g_iter = 0; all_g_iter < results.prizes.length; all_g_iter++) {
+                for (var book_g_iter = 0; book_g_iter < results.book.prize.length; book_g_iter++) {
+                    if (results.prizes[all_g_iter]._id.toString()==results.book.prize[book_g_iter]._id.toString()) {
+                        results.prizes[all_g_iter].checked='true';
+                    }
+                }
+            }
+            res.render('book_form', { title: 'Update Book', authors:results.authors, genres:results.genres, formatos:results.formatos, prizes:results.prizes, book: results.book });
         });
 
 };
@@ -364,6 +386,18 @@ exports.book_update_post = [
             else
             req.body.genre=new Array(req.body.genre);
         }
+        if(!(req.body.formato instanceof Array)){
+            if(typeof req.body.formato==='undefined')
+            req.body.formato=[];
+            else
+            req.body.formato=new Array(req.body.formato);
+        }
+        if(!(req.body.prize instanceof Array)){
+            if(typeof req.body.prize==='undefined')
+            req.body.prize=[];
+            else
+            req.body.prize=new Array(req.body.prize);
+        }
         next();
     },
 
@@ -379,6 +413,8 @@ exports.book_update_post = [
     sanitizeBody('summary').escape(),
     sanitizeBody('isbn').escape(),
     sanitizeBody('genre.*').escape(),
+    sanitizeBody('formato.*').escape(),
+    sanitizeBody('prize.*').escape(),
 
     // Process request after validation and sanitization.
     (req, res, next) => {
@@ -393,6 +429,8 @@ exports.book_update_post = [
             summary: req.body.summary,
             isbn: req.body.isbn,
             genre: (typeof req.body.genre==='undefined') ? [] : req.body.genre,
+            formato: (typeof req.body.formato==='undefined') ? [] : req.body.formato,
+            prize: (typeof req.body.prize==='undefined') ? [] : req.body.prize,
             _id:req.params.id // This is required, or a new ID will be assigned!
            });
 
@@ -407,6 +445,12 @@ exports.book_update_post = [
                 genres: function(callback) {
                     Genre.find(callback);
                 },
+                formatos: function(callback) {
+                    Formato.find(callback);
+                },
+                prizes: function(callback) {
+                    Prize.find(callback);
+                },
             }, function(err, results) {
                 if (err) { return next(err); }
 
@@ -416,7 +460,19 @@ exports.book_update_post = [
                         results.genres[i].checked='true';
                     }
                 }
-                res.render('book_form', { title: 'Update Book',authors:results.authors, genres:results.genres, book: book, errors: errors.array() });
+                // Mark our selected formatos as checked.
+                for (let i = 0; i < results.formatos.length; i++) {
+                    if (book.formato.indexOf(results.formatos[i]._id) > -1) {
+                        results.formatos[i].checked='true';
+                    }
+                }
+                // Mark our selected prizes as checked.
+                for (let i = 0; i < results.prizes.length; i++) {
+                    if (book.prize.indexOf(results.prizes[i]._id) > -1) {
+                        results.prizes[i].checked='true';
+                    }
+                }
+                res.render('book_form', { title: 'Update Book',authors:results.authors, genres:results.genres,formatos:results.formatos,prizes:results.prizes, book: book, errors: errors.array() });
             });
             return;
         }
